@@ -15,6 +15,7 @@ let s:outputter = {
   \     'diff_split':
   \         '%{winwidth(0) * 2 < winheight(0) * 5 ? "" : "vertical"}',
   \     'diff_into': 0,
+  \     'error': 'buffer',
   \     },
   \ }
 
@@ -29,6 +30,13 @@ endfunction
 function! s:outputter.finish(session)
     if self.config.diff
         let original_data = getline('1', '$')
+    endif
+
+    if !empty(self.config.error) && a:session.exit_code
+        let outputter = a:session.make_module('outputter', self.config.error)
+        call outputter.output(self._result, a:session)
+        call outputter.finish(a:session)
+        return
     endif
 
     if a:session.config.mode ==# 'n'
