@@ -66,6 +66,7 @@ function! s:outputter.finish(session)
         silent 1 delete _
         nnoremap <buffer> q :diffoff<CR><C-w>c
         diffthis
+        setlocal nomodifiable
 
         if !self.config.diff_into
             wincmd p
